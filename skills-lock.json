@@ -1,6 +1,21 @@
 {
   "version": 1,
   "skills": {
+    "baoyu-cover-image": {
+      "source": "jimliu/baoyu-skills",
+      "sourceType": "github",
+      "computedHash": "820dd116c224efdcc24a5d5bb1ef747a2a350fa7f699120e37ec16a65d7ed60f"
+    },
+    "baoyu-infographic": {
+      "source": "jimliu/baoyu-skills",
+      "sourceType": "github",
+      "computedHash": "75cc69faf91134f1a887c01694081728e1d5e67d3a5173119010822b3d3c52af"
+    },
+    "baoyu-slide-deck": {
+      "source": "jimliu/baoyu-skills",
+      "sourceType": "github",
+      "computedHash": "4f765b62e438682d6b5ce83246877713adc182c019a5dc14863be7a25c943559"
+    },
     "kpi-dashboard-design": {
       "source": "wshobson/agents",
       "sourceType": "github",
