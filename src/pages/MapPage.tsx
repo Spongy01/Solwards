@@ -7,7 +7,7 @@ import type { AnalysisResponse } from '@/types'
 import MapSearch from '@/components/MapSearch'
 import ResultsModal from '@/components/ResultsModal'
 
-const DEFAULT_STATE = 'CA'
+const DEFAULT_STATE = 'NY'
 
 /** Selected location from map search (lat/lng + optional address) */
 interface SelectedLocation {
@@ -49,10 +49,10 @@ export default function MapPage() {
       const data = hasPolygon && path.length >= 3
         ? await analyzeSolarArea({ ...options, polygon: path })
         : await analyzeSolarArea({
-            ...options,
-            latitude: selectedLocation!.lat,
-            longitude: selectedLocation!.lng,
-          })
+          ...options,
+          latitude: selectedLocation!.lat,
+          longitude: selectedLocation!.lng,
+        })
       setResult(data)
     } catch (e) {
       const message = e instanceof Error ? e.message : 'Analysis failed'
@@ -110,11 +110,10 @@ export default function MapPage() {
             <button
               type="button"
               onClick={toggleDrawMode}
-              className={`rounded-xl font-semibold px-6 py-3 shadow-lg transition-smooth ${
-                drawMode
+              className={`rounded-xl font-semibold px-6 py-3 shadow-lg transition-smooth ${drawMode
                   ? 'bg-earth-700 text-white hover:bg-earth-800'
                   : 'bg-white text-earth-800 border border-slate-200 hover:bg-slate-50'
-              }`}
+                }`}
             >
               {drawMode ? 'Cancel drawing' : 'Draw Roof Area'}
             </button>

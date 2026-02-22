@@ -19,7 +19,7 @@ export function useGoogleMaps(containerRef: React.RefObject<HTMLDivElement | nul
 
     const apiKey =
       typeof import.meta.env?.VITE_GOOGLE_MAPS_API_KEY === 'string' &&
-      import.meta.env.VITE_GOOGLE_MAPS_API_KEY.length > 0
+        import.meta.env.VITE_GOOGLE_MAPS_API_KEY.length > 0
         ? import.meta.env.VITE_GOOGLE_MAPS_API_KEY
         : (window as unknown as { __GOOGLE_MAPS_API_KEY__?: string }).__GOOGLE_MAPS_API_KEY__
 
@@ -43,9 +43,9 @@ export function useGoogleMaps(containerRef: React.RefObject<HTMLDivElement | nul
     script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&callback=__mapsReady`
     script.async = true
     script.defer = true
-    ;(window as unknown as { __mapsReady?: () => void }).__mapsReady = () => {
-      initMap()
-    }
+      ; (window as unknown as { __mapsReady?: () => void }).__mapsReady = () => {
+        initMap()
+      }
     script.onerror = () => setError('Failed to load Google Maps script.')
     document.head.appendChild(script)
 
@@ -58,6 +58,7 @@ export function useGoogleMaps(containerRef: React.RefObject<HTMLDivElement | nul
         streetViewControl: false,
         fullscreenControl: true,
         zoomControl: true,
+        mapTypeId: 'satellite',
       })
       setIsReady(true)
     }

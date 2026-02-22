@@ -72,8 +72,14 @@ export interface SolarScoreBreakdown {
 export interface FinancialOutlook {
   annual_savings_usd?: number
   payback_years?: number
-  net_benefit_25yr?: number
-  [key: string]: unknown
+  net_benefit_25yr?: number,
+  system_cost_net?: number
+  total_net_savings_25_years?: number
+  net_profit_25_years?: number
+  payback_period_years?: number
+  roi_25_years?: number
+  first_year_savings_gross?: number
+  first_year_savings_net?: number
 }
 
 export interface EquityAnalysisResponse {
@@ -91,5 +97,5 @@ export interface AnalysisResponse {
   solar_score: number
   solar_score_breakdown?: SolarScoreBreakdown | null
   financial_outlook?: FinancialOutlook | null
-  equity_analysis?: EquityAnalysisResponse | null
+  // equity_analysis?: EquityAnalysisResponse | null
 }
