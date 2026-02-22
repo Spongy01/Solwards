@@ -1,13 +1,23 @@
-import { Leaf, Ruler, Zap, TrendingUp, Info } from 'lucide-react'
+import { Leaf, Ruler, Zap, TrendingUp, Info, Loader2 } from 'lucide-react'
+import ReactMarkdown from 'react-markdown'
 import type { AnalysisResponse } from '@/types'
 
 interface ResultsModalPage1Props {
   result: AnalysisResponse
   isVisible: boolean
   onNext: () => void
+  summaryMarkdown?: string | null
+  summaryLoading?: boolean
+  summaryError?: string | null
 }
 
-export default function ResultsModalPage1({ result, isVisible }: ResultsModalPage1Props) {
+export default function ResultsModalPage1({
+  result,
+  isVisible,
+  summaryMarkdown,
+  summaryLoading,
+  summaryError,
+}: ResultsModalPage1Props) {
   const {
     solar_score,
     roof_analysis,
@@ -80,6 +90,25 @@ export default function ResultsModalPage1({ result, isVisible }: ResultsModalPag
               </div>
             </div>
           </div>
+        </div>
+
+        {/* LLM-generated summary (full width, below score and CO2) */}
+        <div className="lg:col-span-6 glass-panel rounded-3xl p-6 stagger-2 hover:shadow-glass-hover transition-smooth">
+          <h3 className="text-lg font-bold text-earth-900 mb-3">Summary</h3>
+          {summaryLoading && (
+            <div className="flex items-center gap-3 text-earth-500 py-6">
+              <Loader2 className="w-5 h-5 animate-spin shrink-0" />
+              <span className="text-sm font-medium">Generating summary…</span>
+            </div>
+          )}
+          {summaryError && !summaryLoading && (
+            <p className="text-sm text-earth-500 py-2">{summaryError}</p>
+          )}
+          {summaryMarkdown && !summaryLoading && (
+            <div className="summary-markdown text-earth-700 text-sm [&_h2]:text-lg [&_h2]:font-bold [&_h2]:text-earth-900 [&_h2]:mt-4 [&_h2]:mb-2 [&_h2:first-child]:mt-0 [&_p]:mb-2 [&_ul]:list-disc [&_ul]:pl-5 [&_li]:mb-1 [&_strong]:text-earth-900">
+              <ReactMarkdown>{summaryMarkdown}</ReactMarkdown>
+            </div>
+          )}
         </div>
 
         {/* Roof Details */}

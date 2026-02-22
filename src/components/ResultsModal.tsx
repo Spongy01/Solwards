@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import type { AnalysisResponse } from '@/types'
 import { Sun, ChevronRight, ChevronLeft } from 'lucide-react'
+import { fetchSummaryForAnalysis } from '@/services/solarApi'
 import ResultsModalPage1 from './ResultsModalPage1'
 import ResultsModalPage2 from './ResultsModalPage2'
 
@@ -12,6 +13,7 @@ interface ResultsModalProps {
 /**
  * Centered modal with solar analysis results from backend API.
  * Uses a modern Bento Box layout with glassmorphism and animated entry.
+ * Fetches LLM summary when modal opens.
  */
 export default function ResultsModal({ result, onClose }: ResultsModalProps) {
   const {
@@ -25,6 +27,31 @@ export default function ResultsModal({ result, onClose }: ResultsModalProps) {
   const confidenceStroke = confidencePercent >= 90 ? 'stroke-eco-500' : confidencePercent >= 70 ? 'stroke-sun-500' : 'stroke-earth-400'
 
   const [currentPage, setCurrentPage] = useState(0)
+  const [summaryMarkdown, setSummaryMarkdown] = useState<string | null>(null)
+  const [summaryLoading, setSummaryLoading] = useState(true)
+  const [summaryError, setSummaryError] = useState<string | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+    setSummaryLoading(true)
+    setSummaryError(null)
+    setSummaryMarkdown(null)
+    fetchSummaryForAnalysis(result)
+      .then((res) => {
+        if (!cancelled) {
+          setSummaryMarkdown(res.summary_markdown)
+        }
+      })
+      .catch((e) => {
+        if (!cancelled) {
+          setSummaryError(e instanceof Error ? e.message : 'Summary unavailable')
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setSummaryLoading(false)
+      })
+    return () => { cancelled = true }
+  }, [result.analysis_id])
 
   // Keyboard navigation
   useEffect(() => {
@@ -124,7 +151,14 @@ export default function ResultsModal({ result, onClose }: ResultsModalProps) {
 
         {/* Main Content Area */}
         <div className="w-full relative shrink-0">
-          <ResultsModalPage1 result={result} isVisible={currentPage === 0} onNext={() => setCurrentPage(1)} />
+          <ResultsModalPage1
+            result={result}
+            isVisible={currentPage === 0}
+            onNext={() => setCurrentPage(1)}
+            summaryMarkdown={summaryMarkdown}
+            summaryLoading={summaryLoading}
+            summaryError={summaryError}
+          />
           <ResultsModalPage2 result={result} isVisible={currentPage === 1} />
         </div>
 

@@ -5,7 +5,7 @@
  * Supports either polygon (user-drawn roof) or latitude/longitude (searched location only).
  */
 
-import type { AnalysisResponse, Polygon } from '@/types'
+import type { AnalysisResponse, Polygon, SummaryResponse } from '@/types'
 import { getPolygonCentroid } from '@/utils/geometry'
 
 const env = import.meta.env as { VITE_API_BASE_URL?: string; VITE_ANALYZE_PATH?: string }
@@ -17,6 +17,8 @@ const getBaseUrl = (): string => {
 
 /** Backend path. Use VITE_ANALYZE_PATH if your API uses e.g. /api/v1/analyze-solar */
 const getAnalyzePath = (): string => env.VITE_ANALYZE_PATH || '/api/v1/analyze'
+
+const SUMMARY_PATH = '/api/v1/summary'
 
 export interface AnalyzeOptions {
   /** User-drawn roof polygon. When provided, sends user_polygon + centroid as lat/lng. */
@@ -93,6 +95,39 @@ export async function analyzeSolarArea(options: AnalyzeOptions): Promise<Analysi
   const dailyKwh = data.solar_potential?.daily_generation_kwh ?? 0
   data.monthly_generation = computeMonthlyGeneration(dailyKwh)
   return data
+}
+
+/**
+ * Fetch LLM-generated summary for an analysis result.
+ * Call after you have the full AnalysisResponse from analyzeSolarArea.
+ */
+export async function fetchSummaryForAnalysis(result: AnalysisResponse): Promise<SummaryResponse> {
+  const body = {
+    analysis_id: result.analysis_id,
+    location: result.location,
+    solar_potential: result.solar_potential,
+    ...(result.financial_outlook ? { financial_outlook: result.financial_outlook } : {}),
+    additional_context: undefined as string | undefined,
+  }
+  const baseUrl = getBaseUrl()
+  const url = baseUrl ? `${baseUrl}${SUMMARY_PATH}` : SUMMARY_PATH
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+  if (!res.ok) {
+    const text = await res.text()
+    let detail = text
+    try {
+      const json = JSON.parse(text)
+      if (json.detail) detail = typeof json.detail === 'string' ? json.detail : JSON.stringify(json.detail)
+    } catch {
+      // use text as-is
+    }
+    throw new Error(detail || `Summary failed (${res.status})`)
+  }
+  return (await res.json()) as SummaryResponse
 }
 
 /** Month keys in calendar order (0 = Jan, 11 = Dec) for monthly_generation output */

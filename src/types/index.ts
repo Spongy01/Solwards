@@ -97,3 +97,22 @@ export interface AnalysisResponse {
   financial_outlook?: FinancialOutlook | null
   monthly_generation?: MonthlyGeneration
 }
+
+// ----- Summary API (POST /api/v1/summary) -----
+
+/** Request body for LLM summary endpoint */
+export interface SummaryRequest {
+  analysis_id: string
+  location: Location
+  solar_potential: SolarPotential
+  financial_outlook?: FinancialOutlook | null
+  additional_context?: string
+}
+
+/** Response from summary endpoint */
+export interface SummaryResponse {
+  analysis_id: string
+  generated_at: string
+  summary_markdown: string
+  model_name?: string
+}
