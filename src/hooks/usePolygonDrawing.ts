@@ -13,6 +13,7 @@ interface UsePolygonDrawingOptions {
 export function usePolygonDrawing({ map, enabled }: UsePolygonDrawingOptions) {
   const [path, setPath] = useState<LatLng[]>([])
   const overlayRef = useRef<google.maps.Polygon | null>(null)
+  const markersRef = useRef<google.maps.Marker[]>([])
 
   const clear = useCallback(() => {
     setPath([])
@@ -20,6 +21,8 @@ export function usePolygonDrawing({ map, enabled }: UsePolygonDrawingOptions) {
       overlayRef.current.setMap(null)
       overlayRef.current = null
     }
+    markersRef.current.forEach((marker) => marker.setMap(null))
+    markersRef.current = []
   }, [])
 
   // Sync overlay with path; auto-close polygon for display
@@ -34,20 +37,38 @@ export function usePolygonDrawing({ map, enabled }: UsePolygonDrawingOptions) {
       return
     }
 
-    const closedPath = path.length >= 3 ? [...path, path[0]] : path
+    const closedPath = path.length === 4 ? [...path, path[0]] : path
     const gmPath = closedPath.map((p) => ({ lat: p.lat, lng: p.lng }))
 
     if (!overlayRef.current) {
       overlayRef.current = new google.maps.Polygon({
         paths: gmPath,
-        strokeColor: '#16a34a',
+        strokeColor: '#d97706',
         strokeWeight: 2,
-        fillColor: '#22c55e',
+        fillColor: '#f59e0b',
         fillOpacity: 0.35,
         map,
       })
     } else {
       overlayRef.current.setPath(gmPath)
+    }
+
+    // Sync markers
+    if (path.length > markersRef.current.length) {
+      const newPoint = path[path.length - 1]
+      const marker = new google.maps.Marker({
+        position: newPoint,
+        map,
+        icon: {
+          path: google.maps.SymbolPath.CIRCLE,
+          scale: 6,
+          fillColor: '#f59e0b',
+          fillOpacity: 1,
+          strokeWeight: 2,
+          strokeColor: '#ffffff',
+        },
+      })
+      markersRef.current.push(marker)
     }
   }, [map, path])
 
@@ -56,18 +77,24 @@ export function usePolygonDrawing({ map, enabled }: UsePolygonDrawingOptions) {
     if (!map || !enabled) return
 
     const listener = (e: google.maps.MapMouseEvent) => {
+      // Limit to 4 points
+      if (path.length >= 4) return
+
       const lat = e.latLng?.lat()
       const lng = e.latLng?.lng()
       if (lat != null && lng != null) {
-        setPath((prev) => [...prev, { lat, lng }])
+        setPath((prev) => {
+          if (prev.length >= 4) return prev
+          return [...prev, { lat, lng }]
+        })
       }
     }
 
-    map.addListener('click', listener)
+    const mapListener = map.addListener('click', listener)
     return () => {
-      google.maps.event.clearListeners(map, 'click')
+      google.maps.event.removeListener(mapListener)
     }
-  }, [map, enabled])
+  }, [map, enabled, path.length])
 
-  return { path, setPath, clear, hasPolygon: path.length >= 3 }
+  return { path, setPath, clear, isComplete: path.length === 4 }
 }

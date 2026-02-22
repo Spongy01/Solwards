@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 
 const SCRIPT_ID = 'google-maps-script'
-const DEFAULT_CENTER = { lat: 37.7749, lng: -122.4194 }
-const DEFAULT_ZOOM = 14
+const DEFAULT_CENTER = { lat: 40.914442956462416, lng: -73.12797534981249 }
+const DEFAULT_ZOOM = 19
 
 /**
  * Loads Google Maps JS API and creates a map in the given container.
@@ -13,6 +13,16 @@ export function useGoogleMaps(containerRef: React.RefObject<HTMLDivElement | nul
   const [isReady, setIsReady] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const mapRef = useRef<google.maps.Map | null>(null)
+
+  // Allow toggling draw pointer
+  const setDrawingCursor = (isDrawing: boolean) => {
+    if (mapRef.current) {
+      mapRef.current.setOptions({
+        draggableCursor: isDrawing ? 'crosshair' : null,
+        draggingCursor: isDrawing ? 'crosshair' : null,
+      })
+    }
+  }
 
   useEffect(() => {
     if (!containerRef.current) return
@@ -59,6 +69,7 @@ export function useGoogleMaps(containerRef: React.RefObject<HTMLDivElement | nul
         fullscreenControl: true,
         zoomControl: true,
         mapTypeId: 'satellite',
+        tilt: 0,
       })
       setIsReady(true)
     }
@@ -71,7 +82,7 @@ export function useGoogleMaps(containerRef: React.RefObject<HTMLDivElement | nul
     }
   }, [containerRef])
 
-  return { mapRef, isReady, error }
+  return { mapRef, isReady, error, setDrawingCursor }
 }
 
 export { DEFAULT_CENTER, DEFAULT_ZOOM }
