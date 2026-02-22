@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply scroll-smooth;
+  }
+  body {
+    @apply font-sans text-earth-800 bg-slate-50 antialiased;
+  }
+}
+
+/* Smooth transitions for interactive elements */
+@layer utilities {
+  .transition-smooth {
+    @apply transition-all duration-300 ease-out;
+  }
+}
+
+/* Google Maps overrides so our controls sit cleanly */
+.gm-style .gm-style-cc,
+.gm-style-pbc {
+  opacity: 0.7;
+}
