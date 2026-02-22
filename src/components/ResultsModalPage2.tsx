@@ -16,16 +16,16 @@ export default function ResultsModalPage2({ result, isVisible }: ResultsModalPag
     const currentMonth = new Date().getMonth()
     const allMonths = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']
     const displayNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    const startMonthIndex = (currentMonth + 1) % 12
-    
+    // Start with current month, then next months, wrapping to Jan after Dec
+    const startMonthIndex = currentMonth
     const orderedIndices = [
-      ...Array.from({length: 12 - startMonthIndex}, (_, i) => i + startMonthIndex),
-      ...Array.from({length: startMonthIndex}, (_, i) => i)
+      ...Array.from({ length: 12 - startMonthIndex }, (_, i) => i + startMonthIndex),
+      ...Array.from({ length: startMonthIndex }, (_, i) => i),
     ]
 
-    return orderedIndices.map(index => ({
+    return orderedIndices.map((index) => ({
       name: displayNames[index],
-      value: result.monthly_generation![allMonths[index]] || 0
+      value: result.monthly_generation![allMonths[index]] || 0,
     }))
   }, [result.monthly_generation])
 

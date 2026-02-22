@@ -90,25 +90,60 @@ export async function analyzeSolarArea(options: AnalyzeOptions): Promise<Analysi
   }
 
   const data = (await res.json()) as AnalysisResponse
-  const monthly_generation= {
-      "jan": 8500,
-      "feb": 9100,
-      "mar": 11500,
-      "apr": 13800,
-      "may": 15200,
-      "jun": 16500,
-      "jul": 16800,
-      "aug": 15900,
-      "sep": 14200,
-      "oct": 12100,
-      "nov": 9500,
-      "dec": 8100
-    }
-
-  //add monthly generation to data
-  data.monthly_generation = monthly_generation
-
+  const dailyKwh = data.solar_potential?.daily_generation_kwh ?? 0
+  data.monthly_generation = computeMonthlyGeneration(dailyKwh)
   return data
+}
+
+/** Month keys in calendar order (0 = Jan, 11 = Dec) for monthly_generation output */
+const MONTH_KEYS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'] as const
+
+/**
+ * Baseline seasonal ratios by month (Northern Hemisphere typical solar irradiance).
+ * Summer months higher, winter lower. Used so current month's ratio is normalized to 1.
+ */
+const BASELINE_MONTHLY_RATIOS: Record<(typeof MONTH_KEYS)[number], number> = {
+  jan: 0.6,
+  feb: 0.7,
+  mar: 0.9,
+  apr: 1.05,
+  may: 1.15,
+  jun: 1.2,
+  jul: 1.25,
+  aug: 1.15,
+  sep: 1.0,
+  oct: 0.85,
+  nov: 0.7,
+  dec: 0.6,
+}
+
+function getDaysInMonth(monthIndex: number, year: number): number {
+  // monthIndex 0 = Jan, 11 = Dec
+  if (monthIndex === 1) {
+    return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0 ? 29 : 28
+  }
+  const days = [31, 0, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+  return days[monthIndex] ?? 31
+}
+
+/**
+ * Compute monthly generation (kWh) from daily rate.
+ * Current month's ratio is 1; other months use seasonal ratios (summer > 1, winter < 1 relative to current month).
+ */
+function computeMonthlyGeneration(dailyGenerationKwh: number): Record<(typeof MONTH_KEYS)[number], number> {
+  const now = new Date()
+  const currentMonthIndex = now.getMonth()
+  const year = now.getFullYear()
+  const currentMonthRatio = BASELINE_MONTHLY_RATIOS[MONTH_KEYS[currentMonthIndex]]
+
+  const out = {} as Record<(typeof MONTH_KEYS)[number], number>
+  for (let m = 0; m < 12; m++) {
+    const key = MONTH_KEYS[m]
+    const normalizedRatio = currentMonthRatio === 0 ? 1 : BASELINE_MONTHLY_RATIOS[key] / currentMonthRatio
+    const days = getDaysInMonth(m, year)
+    out[key] = Math.round(dailyGenerationKwh * days * normalizedRatio)
+  }
+  return out
 }
 
 
