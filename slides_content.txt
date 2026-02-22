@@ -1,0 +1,130 @@
+Script:
+I. The Problem: The Hidden Cost of "Business as Usual" (0:00 - 0:45)
+
+(Slide: Global Emissions / The Grid's Dark Side)
+
+"Every time you flip a light switch in a typical home, 
+you’re connected to a system that is—quite literally—heating the planet. 
+Right now, the average US household is responsible for nearly 9,000 pounds or 4.7 metric tonnes
+of CO2 emissions every single year just from electricity.
+
+Conventional power generation is over 12 times more carbon-intensive than solar. 
+While coal and natural gas pump up to 1,000 grams of CO2 into our atmosphere for 
+every single kilowatt-hour, a rooftop solar panel produces that same energy for just 41 grams. 
+The difference isn't just a metric; it's the difference between a sustainable future and an 
+environmental collapse. But homeowners are stuck. They want to help, but they lack the tools to see 
+the direct, measurable impact their own roof can make. That’s why we built Solwards."
+
+
+
+II. The Solution: From Data to Action (0:45 - 1:10)
+
+(Slide: Solwards - Mapping the Green Transition)
+"Solwards is more than a calculator; it’s a transparency engine. 
+We bridge the gap between high-level NASA climate data and your specific front door. 
+By integrating Google Maps with real-time irradiance metrics and EIA cost data, 
+we turn an abstract environmental problem into a tangible, personal solution.
+
+We provide every user with a comprehensive Solar Score, 
+but we don't stop there. Our backend performs a deep-dive financial audit—
+calculating everything from 25-year ROI and Net Profit to the exact Payback Period in years. 
+We don't just tell you solar is 'good'; we show you exactly how many tons of carbon you’ll keep 
+out of the atmosphere and exactly how many dollars you'll keep in your pocket."
+
+
+III. The Demo (1:00 - 2:15)
+(Live Demo or Video Walkthrough)
+"Let’s look at how it works.
+
+The Entry: Our homepage is designed to inspire. We want users to feel the impact they could be making. One click takes us to the Map Interface.
+
+Precision Mapping: Here, we’ve integrated a search bar for any address. But here’s the magic: instead of a circular radius, we use a custom polygon tool. As I click and drag these points, I’m defining the exact surface area of my available roof space.
+
+The Analysis: Once the polygon is closed, we hit 'Analyze.' At this moment, our backend API is doing the heavy lifting. It takes those latitude and longitude coordinates, cross-references them with regional solar irradiance data, and calculates the fiscal outlook based on local energy rates.
+
+The Result: The modal you see now is the 'Solar Score.' It’s a comprehensive breakdown: energy generated per day, estimated cost savings, and—crucially—the environmental impact in CO2 reduction. We even provide an equity analysis to show how this investment scales over time."
+
+
+IV. The Impact & Closing (2:20 - 2:45)
+
+(Slide: The Future of Solwards / Thank You)
+
+"If we increased residential solar by just 15%, we could slash 8.5 million metric tons of CO2 annually. 
+That is the goal of Solwards: to move homeowners from 'thinking about it' to 'acting on it.' 
+By making the invisible costs of conventional energy visible, we’re empowering everyone to take their 
+first step toward a carbon-neutral home.
+
+
+
+Slides Content:
+
+------
+
+Slide 1: The Hidden Cost of "Business as Usual"
+Visual Suggestion: A split screen. On the left, a dark image of a power plant with "1,000g CO2"; on the right, a bright solar panel with "41g CO2."
+
+Main Headline: Our Homes are Heating the Planet.
+
+Key Stats:
+
+9,000 lbs: Average annual CO2 emissions per US household from electricity.
+
+12x More Intensive: Conventional grid power vs. Solar energy.
+
+The Problem: Homeowners want to help, but they lack the tools to measure their personal impact.
+
+------
+
+Slide 2: Solwards — Precision Analytics at Scale
+Visual Suggestion: A "Dashboard" style layout. In the center, a large "Solar Score" gauge, flanked by icons representing "Environment" (Leaf/CO2) and "Finance" (Dollar Sign/Chart).
+
+Main Headline: From Raw Data to Actionable Insights
+
+The Solar Score (Our Unique Metric): * A proprietary 0–100 grade of a location's solar viability based on roof geometry and regional irradiance.
+
+Environmental Impact:
+
+Generation Potential: Monthly and daily energy output (kWh).
+
+CO2 Avoidance: Direct calculation of carbon footprint reduction.
+
+Financial Outlook (25-Year Projection):
+
+ROI & Net Profit: Calculating the 25-year net benefit and total savings.
+
+Payback Period: Exact years until the system pays for itself.
+
+First-Year Gains: Immediate gross and net savings post-installation.
+
+Data Integrity: Driven by the fusion of NASA climate data, EIA utility rates, and Google’s spatial mapping.
+
+-----
+
+[Transition to Live Demo / Website Walkthrough]
+(No slide content needed here as requested)
+
+------
+
+Slide 3: Scalable Impact
+Visual Suggestion: An image of a green forest or a clear skyline with the "8.5 Million" number in massive, bold font.
+
+Main Headline: From "Maybe" to "Action."
+
+The Big Picture:
+
+15% Increase in residential solar = 8.5 Million Metric Tons of CO2 slashed annually.
+
+Our Mission: To make the invisible costs of energy visible and empower a carbon-neutral future.
+
+Call to Action: Let’s build a sustainable future, one roof at a time.
+
+-----
+
+Slide 4: Thank You / Q&A
+Visual Suggestion: Your project name "Solwards" in the center with team member 
+names and a QR code to your GitHub or the live site.
+
+Solwards: Empowering the Solar Revolution.
+
+Contact Info: [Insert Team Names/Links]
+Ready for Questions

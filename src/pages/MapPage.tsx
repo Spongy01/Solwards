@@ -48,7 +48,7 @@ export default function MapPage() {
   const [apiError, setApiError] = useState<string | null>(null)
   const [result, setResult] = useState<AnalysisResponse | null>(null)
 
-  const canAnalyze = isComplete
+  const canAnalyze = isComplete || selectedLocation != null
 
   const handleAnalyze = useCallback(async () => {
     if (!canAnalyze) return
@@ -56,7 +56,18 @@ export default function MapPage() {
     setResult(null)
     setApiError(null)
     try {
-      const data = await analyzeSolarArea(path)
+      const options = {
+        address: selectedLocation?.address,
+        state: 'CA' as const,
+      }
+      const data =
+        isComplete && path.length >= 3
+          ? await analyzeSolarArea({ ...options, polygon: path })
+          : await analyzeSolarArea({
+              ...options,
+              latitude: selectedLocation!.lat,
+              longitude: selectedLocation!.lng,
+            })
       setResult(data)
     } catch (e) {
       const message = e instanceof Error ? e.message : 'Analysis failed'
@@ -64,7 +75,7 @@ export default function MapPage() {
     } finally {
       setLoading(false)
     }
-  }, [canAnalyze, path, selectedLocation])
+  }, [canAnalyze, isComplete, path, selectedLocation])
 
   const handlePlaceSelect = useCallback((place: google.maps.places.PlaceResult) => {
     const location = place.geometry?.location
