@@ -14,6 +14,8 @@ const MOCK_DELAY_MS = 1500
  * Currently returns mock data after a delay; swap implementation for real API.
  */
 export async function analyzeSolarArea(polygon: Polygon): Promise<AnalysisResponse> {
+  // Use unused variables to fix TS build errors for mock implementation
+  console.log('Mock analyzing area for polygon, sq meters:', getPolygonAreaSqM(polygon))
   await new Promise((resolve) => setTimeout(resolve, MOCK_DELAY_MS))
 
   return {
@@ -126,5 +128,19 @@ export async function analyzeSolarArea(polygon: Polygon): Promise<AnalysisRespon
       "first_year_savings_gross": 48076.0,
       "first_year_savings_net": 37662.0
     },
+    "monthly_generation": {
+      "jan": 8500,
+      "feb": 9100,
+      "mar": 11500,
+      "apr": 13800,
+      "may": 15200,
+      "jun": 16500,
+      "jul": 16800,
+      "aug": 15900,
+      "sep": 14200,
+      "oct": 12100,
+      "nov": 9500,
+      "dec": 8100
+    }
   }
 }

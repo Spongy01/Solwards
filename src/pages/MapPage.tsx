@@ -7,7 +7,6 @@ import type { AnalysisResponse } from '@/types'
 import MapSearch from '@/components/MapSearch'
 import ResultsModal from '@/components/ResultsModal'
 
-const DEFAULT_STATE = 'NY'
 
 /** Selected location from map search (lat/lng + optional address) */
 interface SelectedLocation {
@@ -34,7 +33,7 @@ export default function MapPage() {
   const [apiError, setApiError] = useState<string | null>(null)
   const [result, setResult] = useState<AnalysisResponse | null>(null)
 
-  const canAnalyze = hasPolygon || selectedLocation != null
+  const canAnalyze = hasPolygon && path.length >= 3
 
   const handleAnalyze = useCallback(async () => {
     if (!canAnalyze) return
@@ -42,17 +41,7 @@ export default function MapPage() {
     setResult(null)
     setApiError(null)
     try {
-      const options = {
-        address: selectedLocation?.address,
-        state: DEFAULT_STATE,
-      }
-      const data = hasPolygon && path.length >= 3
-        ? await analyzeSolarArea({ ...options, polygon: path })
-        : await analyzeSolarArea({
-          ...options,
-          latitude: selectedLocation!.lat,
-          longitude: selectedLocation!.lng,
-        })
+      const data = await analyzeSolarArea(path)
       setResult(data)
     } catch (e) {
       const message = e instanceof Error ? e.message : 'Analysis failed'
@@ -60,7 +49,7 @@ export default function MapPage() {
     } finally {
       setLoading(false)
     }
-  }, [canAnalyze, hasPolygon, path, selectedLocation])
+  }, [canAnalyze, path, selectedLocation])
 
   const handlePlaceSelect = useCallback((place: google.maps.places.PlaceResult) => {
     const location = place.geometry?.location
@@ -111,8 +100,8 @@ export default function MapPage() {
               type="button"
               onClick={toggleDrawMode}
               className={`rounded-xl font-semibold px-6 py-3 shadow-lg transition-smooth ${drawMode
-                  ? 'bg-earth-700 text-white hover:bg-earth-800'
-                  : 'bg-white text-earth-800 border border-slate-200 hover:bg-slate-50'
+                ? 'bg-earth-700 text-white hover:bg-earth-800'
+                : 'bg-white text-earth-800 border border-slate-200 hover:bg-slate-50'
                 }`}
             >
               {drawMode ? 'Cancel drawing' : 'Draw Roof Area'}
@@ -139,17 +128,35 @@ export default function MapPage() {
             )}
           </div>
           {(hasPolygon || selectedLocation) && !drawMode && (
-            <div className="absolute bottom-6 left-4 z-10">
+            <div className="absolute bottom-6 left-4 z-10 bg-white/95 backdrop-blur-md rounded-2xl p-4 shadow-2xl border border-slate-100/50 flex flex-col gap-3 transition-all duration-300">
               <button
                 type="button"
                 onClick={handleAnalyze}
-                disabled={loading}
-                className="rounded-xl bg-solar-600 text-white font-semibold px-6 py-3 shadow-lg hover:bg-solar-700 disabled:opacity-70 disabled:cursor-not-allowed transition-smooth"
+                disabled={loading || !canAnalyze}
+                className={`rounded-xl font-semibold px-6 py-3 shadow-lg transition-all duration-300 flex items-center justify-center gap-2 ${!canAnalyze
+                  ? 'bg-slate-100 text-slate-400 shadow-none cursor-not-allowed'
+                  : 'bg-solar-600 text-white hover:bg-solar-700 hover:shadow-solar-500/25 active:scale-[0.98]'
+                  }`}
               >
-                {loading ? 'Analyzing…' : 'Analyze Solar Potential'}
+                {loading ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    <span>Analyzing…</span>
+                  </>
+                ) : (
+                  'Analyze Solar Potential'
+                )}
               </button>
-              {selectedLocation && !hasPolygon && (
-                <p className="mt-1 text-xs text-slate-500">Using searched location (no roof outline)</p>
+              {!canAnalyze && (
+                <div className="flex items-center gap-2.5 px-2 text-slate-600">
+                  <span className="relative flex h-2.5 w-2.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-solar-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-solar-500"></span>
+                  </span>
+                  <p className="text-sm font-medium">
+                    Draw roof area to proceed
+                  </p>
+                </div>
               )}
             </div>
           )}

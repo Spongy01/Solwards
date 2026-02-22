@@ -82,9 +82,7 @@ export interface FinancialOutlook {
   first_year_savings_net?: number
 }
 
-export interface EquityAnalysisResponse {
-  [key: string]: unknown
-}
+export type MonthlyGeneration = Record<string, number>
 
 /** Backend analysis response (matches Python AnalysisResponse) */
 export interface AnalysisResponse {
@@ -97,5 +95,5 @@ export interface AnalysisResponse {
   solar_score: number
   solar_score_breakdown?: SolarScoreBreakdown | null
   financial_outlook?: FinancialOutlook | null
-  // equity_analysis?: EquityAnalysisResponse | null
+  monthly_generation?: MonthlyGeneration
 }
