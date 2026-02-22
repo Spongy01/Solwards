@@ -1,6 +1,9 @@
-import { Leaf, Ruler, Zap, TrendingUp, Info, Loader2 } from 'lucide-react'
+import { useState } from 'react'
+import { Leaf, Ruler, Zap, TrendingUp, Info, Loader2, ChevronDown, ChevronUp } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import type { AnalysisResponse } from '@/types'
+
+const SUMMARY_COLLAPSED_HEIGHT = 140
 
 interface ResultsModalPage1Props {
   result: AnalysisResponse
@@ -30,6 +33,8 @@ export default function ResultsModalPage1({
     solar_score >= 80 ? 'from-solar-400 to-solar-600' :
       solar_score >= 60 ? 'from-sun-400 to-sun-600' :
         'from-earth-400 to-earth-600'
+
+  const [summaryExpanded, setSummaryExpanded] = useState(false)
 
   return (
     <div className={`p-6 sm:p-8 relative ${isVisible ? 'block animate-fade-in' : 'hidden'}`}>
@@ -93,7 +98,7 @@ export default function ResultsModalPage1({
         </div>
 
         {/* LLM-generated summary (full width, below score and CO2) */}
-        <div className="lg:col-span-6 glass-panel rounded-3xl p-6 stagger-2 hover:shadow-glass-hover transition-smooth">
+        <div className="lg:col-span-6 glass-panel rounded-3xl p-6 stagger-2 hover:shadow-glass-hover transition-smooth flex flex-col">
           <h3 className="text-lg font-bold text-earth-900 mb-3">Summary</h3>
           {summaryLoading && (
             <div className="flex items-center gap-3 text-earth-500 py-6">
@@ -105,9 +110,43 @@ export default function ResultsModalPage1({
             <p className="text-sm text-earth-500 py-2">{summaryError}</p>
           )}
           {summaryMarkdown && !summaryLoading && (
-            <div className="summary-markdown text-earth-700 text-sm [&_h2]:text-lg [&_h2]:font-bold [&_h2]:text-earth-900 [&_h2]:mt-4 [&_h2]:mb-2 [&_h2:first-child]:mt-0 [&_p]:mb-2 [&_ul]:list-disc [&_ul]:pl-5 [&_li]:mb-1 [&_strong]:text-earth-900">
-              <ReactMarkdown>{summaryMarkdown}</ReactMarkdown>
-            </div>
+            <>
+              <div
+                className="relative overflow-hidden transition-[max-height] duration-300 ease-out"
+                style={{ maxHeight: summaryExpanded ? 2000 : SUMMARY_COLLAPSED_HEIGHT }}
+              >
+                <div className="summary-markdown text-earth-700 text-sm [&_h2]:text-lg [&_h2]:font-bold [&_h2]:text-earth-900 [&_h2]:mt-4 [&_h2]:mb-2 [&_h2:first-child]:mt-0 [&_p]:mb-2 [&_ul]:list-disc [&_ul]:pl-5 [&_li]:mb-1 [&_strong]:text-earth-900">
+                  <ReactMarkdown>{summaryMarkdown}</ReactMarkdown>
+                </div>
+                {!summaryExpanded && (
+                  <div
+                    className="absolute bottom-0 left-0 right-0 h-14 pointer-events-none"
+                    style={{
+                      background: 'linear-gradient(to top, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.6) 50%, transparent 100%)',
+                    }}
+                  />
+                )}
+              </div>
+              <div className="flex justify-center pt-3">
+                <button
+                  type="button"
+                  onClick={() => setSummaryExpanded((prev) => !prev)}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold text-solar-600 hover:bg-solar-50 hover:text-solar-700 transition-smooth"
+                >
+                  {summaryExpanded ? (
+                    <>
+                      <ChevronUp className="w-4 h-4" />
+                      Show less
+                    </>
+                  ) : (
+                    <>
+                      <ChevronDown className="w-4 h-4" />
+                      Read more
+                    </>
+                  )}
+                </button>
+              </div>
+            </>
           )}
         </div>
 
